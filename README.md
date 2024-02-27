@@ -31,4 +31,4 @@
    ```sh
    dotnet run
 
-![showcase](https://github.com/JusticeBeaverr/NETZSCH_interview_task/blob/master/interview_Task.gif)
+![showcase](https://github.com/JusticeBeaverr/WPF_BlazorServer/blob/master/gif.gif)
