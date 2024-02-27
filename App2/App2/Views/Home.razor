@@ -1,0 +1,53 @@
+﻿@page "/"
+@using System.Collections.ObjectModel
+@using App2.Models
+@using Microsoft.AspNetCore.SignalR.Client
+
+
+<h1>Chat</h1>
+<div>
+    <input @bind="NewMessage.Text" />
+    <button @onclick="SendMessage">Send</button>
+</div>
+<div>
+    <ul>
+        @foreach (var message in Messages)
+        {
+            <li>@message.Text</li>
+        }
+    </ul>
+</div>
+
+
+
+@code {
+    public ObservableCollection<MessageModel> Messages { get; } = new ObservableCollection<MessageModel>();
+    public MessageModel NewMessage { get; set; } = new MessageModel();
+    private HubConnection hubConnection;
+
+    protected override void OnInitialized()
+    {
+
+       
+        hubConnection = new HubConnectionBuilder()
+                .WithUrl("https://localhost:7113/webapp")
+                .WithAutomaticReconnect()
+                .Build();
+        hubConnection.On<MessageModel>("ReceiveMessage", (NewMessage) =>
+            {
+                Messages.Add(NewMessage);
+                InvokeAsync(StateHasChanged);
+
+            });
+
+        hubConnection.StartAsync();
+
+    }
+
+    private async Task SendMessage()
+    {
+        await hubConnection.SendAsync("SendMessage", NewMessage);
+        NewMessage = new MessageModel();
+        
+    }
+}
